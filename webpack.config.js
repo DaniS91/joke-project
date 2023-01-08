@@ -18,7 +18,7 @@ module.exports = {
     new ESLintPlugin(),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      title: 'Setup Template',
+      title: 'Joke of the Day',
       template: './src/index.html',
       inject: 'body'
     })

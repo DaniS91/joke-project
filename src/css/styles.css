@@ -1,3 +1,18 @@
 body {
   background-color: lightblue;
+  text-align: center;
+}
+
+/* li {
+  display: inline;
+} */
+
+
+ul {
+  list-style-type: none;
+}
+
+li {
+  display: inline;
+
 }

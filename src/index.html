@@ -1,14 +1,26 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-  <title></title>
+  <title>Joke Generator Game</title>
 </head>
 <body>
-  <form>
-    <button type="submit" class="btn btn-success">Make my joke!</button>
+  <h1>Joke Generator Game</h1>
+  <div>
+  <form id="makeJokeForm">
+    <button type="submit" id="makeJokeButton" class="btn btn-success">Make my joke!</button>
   </form>
+  </div>
   <div>
     <div id="jokeResponse"></div>
+    <div id="jokePractice">
+      <button type= "button" id="practiceButton">Practice!</button>
+      <form id="practiceForm">
+        <ul>
+        </ul>
+        <button type= "button" id="compareButton">Check My Answer!</button>
+      </form>
+    </div>
   </div>
+  <div id="results"></div>
 </body>
 </html>

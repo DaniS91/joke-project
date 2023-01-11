@@ -5,15 +5,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
 import JokeService from './joke.js';
 
-let globalJoke = {};
-let globalJokeArray = [];
+let globalJoke = {}; // Response Joke Object
+let globalJokeArray = []; // Words of the joke split up
 
 // Business Logic
 
 function getJoke() {
   let promise = JokeService.getJoke();
   promise.then(function(joke) {
-    printElements(joke);  
+    printElements(joke); 
     globalJoke = joke;
     let practiceButton = document.getElementById("practiceButton");
     practiceButton.addEventListener("click", practiceJoke);
@@ -41,60 +41,55 @@ function printElements(data) {
   }
 }
 
+function jokeFormGenerator(jokeArray){
+  const ul = document.querySelector("ul");
+  jokeArray.forEach((element, index) => {
+    const li = document.createElement("li");
+    li.append(element + ' ');
+    ul.append(li);
+    li.setAttribute("id", `${index}`);
+
+    if (globalJoke['type'] === "twopart" && index === 0){
+      const li = document.createElement("li");
+      li.append('Q: ');
+      ul.prepend(li);
+    } else if (globalJoke['type'] === "twopart" && index === (globalJoke['setup'].split(' ').length-1)){
+      ul.append(document.createElement("br"));
+      const li = document.createElement("li");
+      li.append('A: ');
+      ul.append(li);
+    }
+  });
+  let num = Math.floor(Math.random() * jokeArray.length);
+  for (let i = 0; i<jokeArray.length; i++) {
+    if (i === num) {
+      let itemToDelete = document.getElementById(`${i}`);
+      itemToDelete.innerText = '';
+      let textBox = document.createElement("input");
+      textBox.setAttribute("id", `${i}`);
+      textBox.setAttribute("type", "text");
+      itemToDelete.append(textBox);
+    }
+  }
+  let compareButton = document.getElementById("compareButton");
+  compareButton.addEventListener("click", compareInput);
+}
+
 function practiceJoke() {
   let data = globalJoke;
   const jokeType = data['type'];
   const ul = document.querySelector("ul");
   ul.innerHTML = null;
-  
   if (jokeType === 'twopart') {
-    let jokeArray = data['setup'].split(' ');
+    let jokeArray = (data['setup'].split(' ')).concat(data['delivery'].split(' '));
     globalJokeArray = jokeArray;
-    jokeArray.forEach((element, index) => {
-      const li = document.createElement("li");
-      li.append(element + ' ');
-      ul.append(li);
-      li.setAttribute("id", `${index}`);
-    });
-    let num = Math.floor(Math.random() * jokeArray.length);
-    for (let i = 0; i<jokeArray.length; i++) {
-      if (i === num) {
-        let itemToDelete = document.getElementById(`${i}`);
-        itemToDelete.innerText = '';
-        let textBox = document.createElement("input");
-        textBox.setAttribute("id", `${i}`);
-        textBox.setAttribute("type", "text");
-        itemToDelete.append(textBox);
-      }
-    }
-    let compareButton = document.getElementById("compareButton");
-    compareButton.addEventListener("click", compareInput);
-
+    jokeFormGenerator(jokeArray);
   } else if (jokeType === 'single') {
     let jokeArray = data['joke'].split(' ');
     globalJokeArray = jokeArray;
-    jokeArray.forEach((element, index) => {
-      const li = document.createElement("li");
-      li.append(element+ ' ');
-      ul.append(li);
-      li.setAttribute("id", `${index}`);
-    });
-    let num = Math.floor(Math.random() * jokeArray.length);
-      
-    for (let i = 0; i<jokeArray.length; i++) {
-      if (i === num) {
-        let itemToDelete = document.getElementById(`${i}`);
-        itemToDelete.innerText = '';
-        let textBox = document.createElement("input");
-        textBox.setAttribute("id", `${i}`);
-        textBox.setAttribute("type", "text");
-        itemToDelete.append(textBox);
-      }
-    }
-    let compareButton = document.getElementById("compareButton");
-    compareButton.addEventListener("click", compareInput);
+    jokeFormGenerator(jokeArray);
   }
-}
+  }
 
 function compareInput() {
   let jokeArray = globalJokeArray;
@@ -114,6 +109,8 @@ function printError(error) {
 
 function handleFormSubmission(event) {
   event.preventDefault();
+  document.querySelector("ul").innerHTML = null;
+  document.getElementById('results').innerHTML = null;
   getJoke();
 }
 

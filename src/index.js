@@ -1,7 +1,6 @@
 //User Interface Logic
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import { library } from 'webpack';
 import './css/styles.css';
 import JokeService from './joke.js';
 
@@ -11,15 +10,15 @@ let globalJokeArray = []; // Words of the joke split up
 // Business Logic
 
 function getJoke() {
-  let promise = JokeService.getJoke();
-  promise.then(function(joke) {
-    printElements(joke); 
-    globalJoke = joke;
-    let practiceButton = document.getElementById("practiceButton");
-    practiceButton.addEventListener("click", practiceJoke);
-  }, function(errorArray) {
-    printError(errorArray);
-  });
+  JokeService.getJoke() 
+    .then(function(joke) {
+      printElements(joke); 
+      globalJoke = joke;
+      let practiceButton = document.getElementById("practiceButton");
+      practiceButton.addEventListener("click", practiceJoke);
+    }, function(errorMessage) {
+      printError(errorMessage);
+    });
 }
 
 // UI Logic
@@ -29,6 +28,7 @@ function printElements(data) {
   const jokeType = data['type'];
   if (jokeType === "single"){
     document.querySelector('#jokeResponse').innerHTML = data['joke'];
+    document.querySelector('.hidden').removeAttribute("class");
   }else if (jokeType === 'twopart') {
     let question = document.createElement("div");
     question.setAttribute("id","jokeQuestion");
@@ -38,6 +38,9 @@ function printElements(data) {
     answer.innerHTML = `A: ${data['delivery']}`;
     document.querySelector('#jokeResponse').append(question);
     document.querySelector('#jokeResponse').append(answer);
+
+    //this removed attribute needs to be added back when the user presses the submit button again
+    document.querySelector('.hidden').removeAttribute("class");
   }
 }
 
@@ -76,6 +79,7 @@ function jokeFormGenerator(jokeArray){
 }
 
 function practiceJoke() {
+  document.querySelector("#jokeResponse").setAttribute("class", "hidden");
   let data = globalJoke;
   const jokeType = data['type'];
   const ul = document.querySelector("ul");
@@ -89,7 +93,7 @@ function practiceJoke() {
     globalJokeArray = jokeArray;
     jokeFormGenerator(jokeArray);
   }
-  }
+}
 
 function compareInput() {
   let jokeArray = globalJokeArray;
@@ -103,8 +107,9 @@ function compareInput() {
   }
 }
 
-function printError(error) {
-  document.querySelector('#jokeResponse').innerText = `There was an error accessing the joke data for ${error[0].status} ${error[0].statusText}: ${error[1].message}`;
+function printError(errorMessage) {
+  // document.querySelector('#jokeResponse').innerText = `There was an error accessing the joke data for ${error[0].status} ${error[0].statusText}: ${error[1].message}`;
+  document.querySelector('#jokeResponse').innerText = errorMessage;
 }
 
 function handleFormSubmission(event) {
